@@ -66,13 +66,20 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
+console.log('Attempting DB connection with:', {
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  database: process.env.DB_NAME,
+  passwordSet: !!process.env.DB_PASSWORD,
+});
+
+// Connect to the database, sync the tables, then start listening
 // Connect to the database, sync the tables, then start listening
 sequelize
   .authenticate()
   .then(() => {
     console.log('✅ Connected to MySQL database.');
-    // { alter: true } auto-updates tables to match the models — great for
-    // development. In production you would use proper migrations instead.
     return sequelize.sync({ alter: true });
   })
   .then(() => {
@@ -81,5 +88,13 @@ sequelize
     });
   })
   .catch((err) => {
-    console.error('❌ Unable to connect to the database:', err.message);
+    // Print everything useful — err.message alone can come back blank or
+    // unhelpful for connection-level failures. err.original/err.parent is
+    // where Sequelize hides the actual driver error (wrong host, wrong
+    // password, connection refused, etc.).
+    console.error('❌ Unable to connect to the database.');
+    console.error('Error name:', err.name);
+    console.error('Error message:', err.message);
+    console.error('Error code:', err.original?.code || err.parent?.code);
+    console.error('Full error:', JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
   });
