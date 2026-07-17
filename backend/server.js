@@ -31,7 +31,7 @@ const app = express();
 
 // --- Global middleware ---
 app.use(cors({
-  origin: 'https://blaisetechglobalresources.netlify.app',
+  origin: 'https://blaisetechglobalresources.netlify.app/api',
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
