@@ -41,7 +41,7 @@ h1, h2, h3 { color: var(--charcoal); font-weight: 700; }
 /* Hamburger button — hidden on desktop, shown on mobile below */
 .menu-toggle {
   display: none;
-  background: none; border: none; color: white; cursor: pointer;
+  background: white; border: none; color: white; cursor: pointer;
   padding: 6px; align-items: center; justify-content: center;
 }
 .menu-toggle svg { width: 26px; height: 26px; }
@@ -58,13 +58,13 @@ h1, h2, h3 { color: var(--charcoal); font-weight: 700; }
     top: 100%;
     left: 0;
     right: 0;
-    background: var(--charcoal);
+    background: var(--primary-dark);
     flex-direction: column;
     align-items: stretch;
     gap: 0;
     padding: 8px 0 14px;
     border-top: 1px solid rgba(255,255,255,0.12);
-    box-shadow: 0 8px 16px rgba(255, 255, 255);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
   }
   .nav-links.open { display: flex; }
   .nav-links a, .nav-links .link-button {
