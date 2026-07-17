@@ -41,10 +41,17 @@ h1, h2, h3 { color: var(--charcoal); font-weight: 700; }
 /* Hamburger button — hidden on desktop, shown on mobile below */
 .menu-toggle {
   display: none;
-  background: var(--grey-light); border: none; color: white; cursor: pointer;
-  padding: 6px; align-items: center; justify-content: center;
+  background: none; border: none; cursor: pointer;
+  padding: 8px; border-radius: 6px;
+  align-items: center; justify-content: center;
+  color: #e6e4e3;
+  transition: background 0.15s, color 0.15s;
 }
-.menu-toggle svg { width: 26px; height: 26px; }
+.menu-toggle:hover, .menu-toggle:active {
+  color: white;
+  background: rgba(255,255,255,0.08);
+}
+.menu-toggle svg { width: 24px; height: 24px; stroke: currentColor; fill: none; }
 
 /* --- Mobile navbar (screens narrower than 900px) --- */
 @media (max-width: 900px) {
