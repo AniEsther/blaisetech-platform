@@ -25,7 +25,7 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="navbar-inner">
-        <Link to="/" className="brand" onClick={handleLinkClick}>Blaise<span>tech</span> Global Resources</Link>
+        <Link to="/" className="brand" onClick={handleLinkClick}>Blaisetech Global Resources</Link>
 
         <button
           className="menu-toggle"
