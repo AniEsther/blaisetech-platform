@@ -41,7 +41,7 @@ h1, h2, h3 { color: var(--charcoal); font-weight: 700; }
 /* Hamburger button — hidden on desktop, shown on mobile below */
 .menu-toggle {
   display: none;
-  background: var(--primary-dark); border: none; color: white; cursor: pointer;
+  background: var(--grey-light); border: none; color: white; cursor: pointer;
   padding: 6px; align-items: center; justify-content: center;
 }
 .menu-toggle svg { width: 26px; height: 26px; }
