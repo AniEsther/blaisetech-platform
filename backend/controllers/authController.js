@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { User } = require('../models');
 const generateToken = require('../utils/generateToken');
+const { sendMail } = require('../utils/email');
 
 // POST /api/auth/register
 async function register(req, res, next) {
@@ -84,7 +85,6 @@ async function getMe(req, res, next) {
 }
 
 // POST /api/auth/forgot-password
-// NOTE: no email service is wired up yet — see devResetToken comment below.
 async function forgotPassword(req, res, next) {
   try {
     const { email } = req.body;
@@ -102,12 +102,21 @@ async function forgotPassword(req, res, next) {
     user.resetPasswordExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
     await user.save();
 
-    res.json({
-      message: 'If an account with that email exists, a reset link has been generated.',
-      // TODO: once a real email provider (Nodemailer/SendGrid/etc.) is connected,
-      // email this link instead of returning it in the response.
-      devResetToken: rawToken,
+    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${rawToken}`;
+
+    const emailSent = await sendMail({
+      to: user.email,
+      subject: 'Reset Your Password',
+      heading: 'Reset Your Password',
+      message: `Hi ${user.fullName},\nWe received a request to reset your password. Click the button below to choose a new one. This link expires in 30 minutes.\nIf you didn't request this, you can safely ignore this email — your password will stay the same.`,
+      ctaLabel: 'Reset Password',
+      ctaUrl: resetUrl,
     });
+
+    const response = { message: 'If an account with that email exists, a reset link has been sent to it.' };
+    if (!emailSent) response.devResetToken = rawToken;
+
+    res.json(response);
   } catch (err) {
     next(err);
   }

@@ -2,6 +2,7 @@
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const { Booking, Quotation, User, EmergencyRequest, Invoice, Order } = require('../models');
+const { sendMail } = require('../utils/email');
 
 // GET /api/admin/summary
 async function getDashboardSummary(req, res, next) {
@@ -57,13 +58,26 @@ async function inviteTechnician(req, res, next) {
       resetPasswordExpires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days to accept the invite
     });
 
-    res.status(201).json({
-      message: 'Technician invited. Share the setup link with them so they can create their own password.',
-      technician: { id: technician.id, fullName: technician.fullName, email: technician.email },
-      // TODO: once a real email provider is connected, email this link instead
-      // of returning it here — see authController.forgotPassword for the same note.
-      devInviteToken: rawToken,
+    const setupUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/set-password/${rawToken}`;
+
+    const emailSent = await sendMail({
+      to: technician.email,
+      subject: 'You\'ve Been Added as a Technician',
+      heading: `Welcome, ${technician.fullName}`,
+      message: `You've been added as a technician at Blaisetech Global Resources. Click the button below to set up your password and complete your profile. This link expires in 3 days.`,
+      ctaLabel: 'Set Up My Account',
+      ctaUrl: setupUrl,
     });
+
+    const response = {
+      message: emailSent
+        ? 'Technician invited — a setup email has been sent to them.'
+        : 'Technician invited. Share the setup link with them so they can create their own password.',
+      technician: { id: technician.id, fullName: technician.fullName, email: technician.email },
+    };
+    if (!emailSent) response.devInviteToken = rawToken;
+
+    res.status(201).json(response);
   } catch (err) { next(err); }
 }
 
@@ -121,10 +135,25 @@ async function resendTechnicianInvite(req, res, next) {
     technician.resetPasswordExpires = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
     await technician.save();
 
-    res.json({
-      message: 'A new setup link has been generated — the old one no longer works.',
-      devInviteToken: rawToken,
+    const setupUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/set-password/${rawToken}`;
+
+    const emailSent = await sendMail({
+      to: technician.email,
+      subject: 'Your Account Setup Link',
+      heading: `Hi ${technician.fullName}`,
+      message: 'Here\'s a fresh link to finish setting up your technician account. Your previous setup link no longer works. This one expires in 3 days.',
+      ctaLabel: 'Set Up My Account',
+      ctaUrl: setupUrl,
     });
+
+    const response = {
+      message: emailSent
+        ? 'A new setup email has been sent to the technician — the old link no longer works.'
+        : 'A new setup link has been generated — the old one no longer works.',
+    };
+    if (!emailSent) response.devInviteToken = rawToken;
+
+    res.json(response);
   } catch (err) { next(err); }
 }
 

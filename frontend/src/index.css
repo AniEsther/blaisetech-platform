@@ -30,13 +30,57 @@ h1, h2, h3 { color: var(--charcoal); font-weight: 700; }
 
 /* Navbar */
 .navbar { background: var(--charcoal); border-bottom: 3px solid var(--accent); color: white; }
-.navbar-inner { max-width: 1140px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; flex-wrap: wrap; }
-.brand { color: white; font-weight: 800; text-decoration: none; font-size: 1.25rem; letter-spacing: 0.3px; }
+.navbar-inner { max-width: 1140px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; position: relative; }
+.brand { color: white; font-weight: 800; text-decoration: none; font-size: 1.15rem; letter-spacing: 0.3px; }
 .brand span { color: var(--accent); }
 .nav-links { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
 .nav-links a, .nav-links .link-button { color: #e6e4e3; text-decoration: none; background: none; border: none; cursor: pointer; font-size: 0.95rem; }
 .nav-links a:hover, .nav-links .link-button:hover { color: white; }
 .emergency-link { color: #ff6b5e !important; font-weight: 700; }
+
+/* Hamburger button — hidden on desktop, shown on mobile below */
+.menu-toggle {
+  display: none;
+  background: none; border: none; color: white; cursor: pointer;
+  padding: 6px; align-items: center; justify-content: center;
+}
+.menu-toggle svg { width: 26px; height: 26px; }
+
+/* --- Mobile navbar (screens narrower than 900px) --- */
+@media (max-width: 900px) {
+  .navbar-inner { flex-wrap: nowrap; }
+  .brand { font-size: 1.05rem; }
+  .menu-toggle { display: flex; }
+
+  .nav-links {
+    display: none; /* hidden until toggled open */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--primary-dark);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 8px 0 14px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a, .nav-links .link-button {
+    padding: 13px 22px;
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-links .btn-link {
+    margin: 10px 22px 0;
+    width: calc(100% - 44px);
+    text-align: center;
+    border-bottom: none;
+  }
+}
 
 /* Hero */
 .hero {
